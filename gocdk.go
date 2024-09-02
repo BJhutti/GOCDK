@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/aws/aws-cdk-go/awscdk/v2"
-	// "github.com/aws/aws-cdk-go/awscdk/v2/awssqs"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awssqs"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 )
@@ -11,35 +11,46 @@ type GocdkStackProps struct {
 	awscdk.StackProps
 }
 
+// scope is the app
 func NewGocdkStack(scope constructs.Construct, id string, props *GocdkStackProps) awscdk.Stack {
+
+	//construct our properties
 	var sprops awscdk.StackProps
 	if props != nil {
 		sprops = props.StackProps
 	}
+
+	//starting a new stsck
 	stack := awscdk.NewStack(scope, &id, &sprops)
 
 	// The code that defines your stack goes here
 
 	// example resource
-	// queue := awssqs.NewQueue(stack, jsii.String("GocdkQueue"), &awssqs.QueueProps{
-	// 	VisibilityTimeout: awscdk.Duration_Seconds(jsii.Number(300)),
-	// })
+	queue := awssqs.NewQueue(stack, jsii.String("GocdkQueue"), &awssqs.QueueProps{
+		VisibilityTimeout: awscdk.Duration_Seconds(jsii.Number(300)),
+	})
 
 	return stack
 }
 
 func main() {
-	defer jsii.Close()
+	defer jsii.Close() //jsii: another framework that lets us use cdk with not typescript. transpiles go into typescript
+	//defer: run this code after everything else. deployed, sythed
 
-	app := awscdk.NewApp(nil)
+	//cdk is like using lego pieces, we can attach things to thhings
+	//app is what were going to bind everything to
+	app := awscdk.NewApp(nil) //type construct
 
-	NewGocdkStack(app, "GocdkStack", &GocdkStackProps{
+	//app will be passed into here
+	//stacks: containds peices of infrastructure . tools in stack, which are in apps
+
+	NewGocdkStack(app, "GocdkStack", &GocdkStackProps{ //returns a stack
 		awscdk.StackProps{
-			Env: env(),
+			Env: env(), //pass in env
 		},
 	})
 
-	app.Synth(nil)
+	app.Synth(nil) //app sythesises the stack
 }
 
 // env determines the AWS environment (account+region) in which our stack is to
@@ -49,7 +60,7 @@ func env() *awscdk.Environment {
 	// Account/Region-dependent features and context lookups will not work, but a
 	// single synthesized template can be deployed anywhere.
 	//---------------------------------------------------------------------------
-	return nil
+	return nil //default awss account credentials
 
 	// Uncomment if you know exactly what account and region you want to deploy
 	// the stack to. This is the recommendation for production stacks.
