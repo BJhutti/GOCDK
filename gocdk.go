@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/aws/aws-cdk-go/awscdk/v2"
-	"github.com/aws/aws-cdk-go/awscdk/v2/awssqs"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 )
@@ -25,10 +25,20 @@ func NewGocdkStack(scope constructs.Construct, id string, props *GocdkStackProps
 
 	// The code that defines your stack goes here
 
-	// example resource
-	queue := awssqs.NewQueue(stack, jsii.String("GocdkQueue"), &awssqs.QueueProps{
-		VisibilityTimeout: awscdk.Duration_Seconds(jsii.Number(300)),
+	awslambda.NewFunction(stack, jsii.String("myLambdaFunction"), &awslambda.FunctionProps{
+		//lambda specifc propertoes
+		//Runtime: what is the backend writtien in?
+		//Handler: where does this code exist?
+		//Code: how do we execute our code?
+		Runtime: awslambda.Runtime_PROVIDED_AL2023(),
+		Code:    awslambda.AssetCode_FromAsset(jsii.String("lambda/function.zip"), nil), // nil means nothiing extra
+		Handler: jsii.String("main"),
 	})
+
+	// example resource
+	//queue := awssqs.NewQueue(stack, jsii.String("GocdkQueue"), &awssqs.QueueProps{
+	//VisibilityTimeout: awscdk.Duration_Seconds(jsii.Number(300)),
+	//})
 
 	return stack
 }
